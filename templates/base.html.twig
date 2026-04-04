@@ -3,6 +3,99 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #fff0f5; /* очень светлый розовый фон */
+                margin: 0;
+                padding: 0;
+            }
+
+            .view-center {
+                text-align: center;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 40px auto;
+                background-color: #fff;
+                padding: 20px 30px;
+                border-radius: 10px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            }
+
+            h1 {
+                text-align: center;
+                color: #b30059;
+            }
+
+            form div {
+                margin-bottom: 15px;
+            }
+
+            label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: #555;
+            }
+
+            input[type="text"], #content {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ffcce6;
+                border-radius: 6px;
+                font-size: 14px;
+                box-sizing: border-box;
+                background-color: #fff0f5;
+            }
+
+            button {
+                background-color: #ff99cc;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background-color 0.3s;
+            }
+
+            button:hover {
+                background-color: #ff66aa;
+            }
+
+            a {
+                color: #ff66aa;
+                text-decoration: none;
+                margin-right: 10px;
+            }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+            .note {
+                border-bottom: 1px solid #ffe6f2;
+                padding: 15px 0;
+                background-color: #fff0f5;
+                border-radius: 6px;
+                margin-bottom: 10px;
+            }
+
+            .note h3 {
+                margin: 0 0 5px;
+            }
+
+            .errors {
+                background-color: #ffe5f0;
+                border: 1px solid #ffb3d9;
+                color: #cc0066;
+                padding: 10px;
+                border-radius: 6px;
+                margin-bottom: 15px;
+            }
+        </style>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
         {% endblock %}

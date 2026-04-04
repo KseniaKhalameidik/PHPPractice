@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PostController!{% endblock %}
+
+{% block body %}
+<div class="container">
+    {% for post in posts %}
+    <div>
+        {{ post.title }}
+        <a href="">Смотреть подробности</a>
+    </div>
+    {% else %}
+        <p>Нет постов</p>
+    {% endfor %}
+    <a href="{{ path('app_post_new')}}">Создать новый пост</a>
+</div>
+{% endblock %}
