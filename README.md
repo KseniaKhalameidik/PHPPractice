@@ -30,11 +30,7 @@ php bin/console make:controller PostController (дальше enter)
 php bin/console make:migration
 
 ## Выполнение миграции
-php bin/console doctrine:migrations:migrate
+php bin/console doctrine:migrations:migrate (дальше enter)
 
 ## Создание формы для Post
-php bin/console make:form PostType Post
-
-php bin/console make:migration 
-php bin/console doctrine:migrations:migrate (дальше enter)
 php bin/console make:form PostType Post
