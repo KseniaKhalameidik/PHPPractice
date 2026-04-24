@@ -1,6 +1,6 @@
-﻿{% extends 'base.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Создание поста{% endblock %}
+{% block title %}Редактирование поста{% endblock %}
 
 {% block body %}
     <div id="content">
@@ -10,8 +10,10 @@
             {{ form_row(form.description) }}
         </div>
         <div style="margin: 5px;">
-            <button>Сохранить</button>
+            <button>Сохранить изменения</button>
         </div>
         {{ form_end(form) }}
+
+        <a href="{{ path('app_post') }}">Назад к списку</a>
     </div>
 {% endblock %}

@@ -3,5 +3,11 @@
 {% block title %}Создание профиля{% endblock %}
 
 {% block body %}
-    {{ include('profile/_form.html.twig')}}
+<div class="container auth-page">
+    <div class="auth-card">
+        <h1 class="auth-card__title">Создание профиля</h1>
+        <p class="auth-card__lead">Кратко опишите себя — это можно будет изменить позже.</p>
+        {{ include('profile/_form.html.twig') }}
+    </div>
+</div>
 {% endblock %}

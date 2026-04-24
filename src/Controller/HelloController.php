@@ -34,7 +34,6 @@ class HelloController extends AbstractController
         return new Response("Hello $name. BaseURI: $baseUri");
     }
 
-    #[IsGranted('ROLE_ADMIN')]
     #[Route('/hello/lucky/number', name: 'app_generate_lucky_number')]
     public function generateLuckyNumber(): Response
     {

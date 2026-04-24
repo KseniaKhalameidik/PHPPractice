@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Repository\PostRepository;
 use App\Entity\Post;
+use App\Entity\User;
+use App\Form\CommentType;
 use App\Form\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,5 +55,53 @@ final class PostController extends AbstractController
             'post/new.html.twig',
             ['form' => $form]
         );
+    }
+
+    #[Route('/post/{id}/show', name: 'app_post_show', methods: ['GET'])]
+    public function show(Post $post): Response
+    {
+        $comment = new Comment();
+        $commentForm = $this->createForm(CommentType::class, $comment, ['action' => $this->generateUrl('app_comment_new', ['post_id' => $post->getId()])]);
+
+         /** @var User */
+        $user = $this->getUser();
+        $profile = $user->getProfile();
+
+        return $this->render(
+            'post/show.html.twig', 
+            ['post' => $post,
+            'form' => $commentForm ]
+        );
+    }
+
+    #[Route('/post/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Post $post): Response
+    {
+        /** @var User */
+        $user = $this->getUser();
+        $profile = $user->getProfile();
+
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->postRepository->savePost($post);
+            return $this->redirectToRoute('app_post');
+        }
+        return $this->render('post/edit.html.twig', [
+            'post' => $post,
+            'form' => $form
+        ]);
+    }
+
+    #[Route('/post/{id}/delete', name: 'app_post_delete', methods: ['POST'])]
+    public function delete(Request $request, Post $post): Response
+    {
+        /** @var User */
+        $user = $this->getUser();
+        $profile = $user->getProfile();
+
+        $this->postRepository->deletePost($post);
+
+        return $this->redirectToRoute('app_post');
     }
 }

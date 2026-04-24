@@ -34,6 +34,21 @@ class PostRepository extends ServiceEntityRepository
         $em->flush();
     }
 
+    public function deletePost(Post $post): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($post);
+        $em->flush();
+    }
+
+    public function getPostWithMaxComments()
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->leftJoin('p.comments', 'c');
+        $qb->groupBy('p.id');
+
+        return $qb->getQuery()->getArrayResult();
+    }
     //    /**
     //     * @return Post[] Returns an array of Post objects
     //     */

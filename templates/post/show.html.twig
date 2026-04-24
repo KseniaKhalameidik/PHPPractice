@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Просмотр поста{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.description }}</p>
+
+        <a href="{{ path('app_post_edit', {'id': post.id}) }}">Редактировать</a>
+        <a href="{{ path('app_post') }}">Назад к списку</a>
+
+        <form method="post" action="{{ path('app_post_delete', {'id': post.id}) }}" style="display:inline-block;" onsubmit="return confirm('Удалить пост?');">
+            <button type="submit">Удалить</button>
+        </form>
+        <section class="post-comments">
+            <h2 class="post-comments__title">Комментарии</h2>
+            <div class="post-comments__form-wrap">
+                <span class="post-comments__form-label">Добавить комментарий</span>
+                {% include 'comment/_form.html.twig' %}
+            </div>
+            {% if post.comments|length > 0 %}
+                <ul class="comment-list">
+                    {% for comment in post.comments %}
+                        <li class="comment-card">
+                            <div class="comment-card__meta">
+                                <strong>{{ comment.author.user.email }}</strong>
+                                · {{ comment.createdAt|date('d.m.Y, H:i') }}
+                            </div>
+                            <p class="comment-card__body">{{ comment.content }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="comment-empty">Пока комментариев к этому посту нет.</p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

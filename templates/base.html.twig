@@ -11,7 +11,7 @@
                 padding: 0;
             }
 
-            .view-center {
+            .view-center p {
                 text-align: center;
             }
 
@@ -40,7 +40,11 @@
                 color: #555;
             }
 
-            input[type="text"], #content {
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            textarea,
+            #content {
                 width: 100%;
                 padding: 10px;
                 border: 1px solid #ffcce6;
@@ -48,6 +52,30 @@
                 font-size: 14px;
                 box-sizing: border-box;
                 background-color: #fff0f5;
+            }
+
+            textarea {
+                min-height: 120px;
+                resize: vertical;
+                font-family: inherit;
+                line-height: 1.45;
+            }
+
+            input[type="submit"] {
+                background-color: #ff99cc;
+                color: white;
+                padding: 10px 22px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+                transition: background-color 0.3s;
+                width: 100%;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #ff66aa;
             }
 
             button {
@@ -94,6 +122,146 @@
                 padding: 10px;
                 border-radius: 6px;
                 margin-bottom: 15px;
+            }
+
+            /* Комментарии под постом */
+            .post-comments {
+                margin-top: 2rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid #ffe6f2;
+            }
+
+            .post-comments__title {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: #b30059;
+                margin: 0 0 1rem;
+                text-align: left;
+            }
+
+            .post-comments__form-wrap {
+                background: linear-gradient(135deg, #fff5f9 0%, #ffeef5 100%);
+                border: 1px solid #ffd6e8;
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .post-comments__form-label {
+                display: block;
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: #883366;
+                margin-bottom: 0.75rem;
+            }
+
+            .comment-list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .comment-card {
+                background: #fff;
+                border: 1px solid #ffd6e8;
+                border-radius: 10px;
+                padding: 1rem 1.15rem;
+                box-shadow: 0 2px 8px rgba(179, 0, 89, 0.06);
+                transition: box-shadow 0.2s ease, border-color 0.2s ease;
+            }
+
+            .comment-card:hover {
+                border-color: #ffb3d9;
+                box-shadow: 0 4px 14px rgba(179, 0, 89, 0.1);
+            }
+
+            .comment-card__meta {
+                font-size: 0.8rem;
+                color: #996688;
+                margin-bottom: 0.5rem;
+                line-height: 1.4;
+            }
+
+            .comment-card__meta strong {
+                color: #b30059;
+                font-weight: 600;
+            }
+
+            .comment-card__body {
+                margin: 0;
+                font-size: 0.95rem;
+                line-height: 1.55;
+                color: #333;
+                white-space: pre-wrap;
+                word-break: break-word;
+            }
+
+            .comment-empty {
+                text-align: center;
+                color: #996688;
+                font-size: 0.95rem;
+                padding: 1.25rem 1rem;
+                background: #fff8fb;
+                border: 1px dashed #ffd6e8;
+                border-radius: 10px;
+            }
+
+            /* Вход, регистрация, форма профиля */
+            .auth-page {
+                padding-top: 1.5rem;
+                padding-bottom: 2rem;
+            }
+
+            .auth-card {
+                max-width: 420px;
+                margin: 0 auto;
+            }
+
+            .auth-card__title {
+                margin: 0 0 0.35rem;
+                font-size: 1.6rem;
+                text-align: center;
+                color: #b30059;
+            }
+
+            .auth-card__lead {
+                margin: 0 0 1.5rem;
+                text-align: center;
+                font-size: 0.95rem;
+                line-height: 1.45;
+                color: #996688;
+            }
+
+            .auth-form .auth-field {
+                margin-bottom: 0.25rem;
+            }
+
+            .auth-form .auth-field label {
+                color: #663355;
+            }
+
+            .auth-actions {
+                margin-top: 1.25rem;
+            }
+
+            .auth-actions button,
+            .auth-actions input[type="submit"] {
+                width: 100%;
+            }
+
+            .auth-links {
+                margin-top: 1.5rem;
+                padding-top: 1.25rem;
+                border-top: 1px solid #ffe6f2;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+
+            .auth-links a {
+                margin: 0 0.35rem;
             }
         </style>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
