@@ -16,6 +16,18 @@ class CommentRepository extends ServiceEntityRepository
         parent::__construct($registry, Comment::class);
     }
 
+    /**
+     * Возвращает комментарий с максимальным содержимым (content)
+     */
+    public function getCommentWithMaxContent()
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->orderBy('LENGTH(c.content)', 'DESC');
+        $qb->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Comment[] Returns an array of Comment objects
     //     */

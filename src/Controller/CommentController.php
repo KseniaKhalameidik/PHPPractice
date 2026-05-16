@@ -12,17 +12,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\CommentReactionRepository;
 
 #[Route('/post/{post_id:post.id}/comment')]
 final class CommentController extends AbstractController
 {
-    #[Route(name: 'app_comment_index', methods: ['GET'])]
-    public function index(CommentRepository $commentRepository): Response
-    {
-        return $this->render('comment/index.html.twig', [
-            'comments' => $commentRepository->findAll(),
-        ]);
-    }
+    // #[Route(name: 'app_comment_index', methods: ['GET'])]
+    // public function index(CommentRepository $commentRepository): Response
+    // {
+    //     return $this->render('comment/index.html.twig', [
+    //         'comments' => $commentRepository->findAll(),
+    //     ]);
+    // }
 
     #[Route('/new', name: 'app_comment_new', methods: ['GET', 'POST'])]
     public function new(Post $post, Request $request, EntityManagerInterface $entityManager): Response
@@ -49,24 +50,23 @@ final class CommentController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_comment_show', methods: ['GET'])]
-    public function show(Comment $comment): Response
-    {
-        return $this->render('comment/show.html.twig', [
-            'comment' => $comment,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_comment_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Comment $comment, EntityManagerInterface $entityManager): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($comment->getAuthor() !== $user->getProfile()) {
+            throw $this->createAccessDeniedException();
+        }
+
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_post_show', ['id' => $comment->getPost()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('comment/edit.html.twig', [
@@ -78,11 +78,17 @@ final class CommentController extends AbstractController
     #[Route('/{id}', name: 'app_comment_delete', methods: ['POST'])]
     public function delete(Request $request, Comment $comment, EntityManagerInterface $entityManager): Response
     {
+         /** @var User $user */
+        $user = $this->getUser();
+        if ($comment->getAuthor() !== $user->getProfile()) {
+            throw $this->createAccessDeniedException();
+        }
+
         if ($this->isCsrfTokenValid('delete'.$comment->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($comment);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_post_show', ['id' => $comment->getPost()->getId()], Response::HTTP_SEE_OTHER);
     }
 }

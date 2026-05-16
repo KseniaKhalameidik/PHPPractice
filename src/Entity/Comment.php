@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\CommentRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
@@ -28,9 +30,16 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?Post $post = null;
 
+    /**
+     * @var Collection<int, CommentReaction>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReaction::class, mappedBy: 'comment', orphanRemoval: true)]
+    private Collection $reactions;
+
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
+        $this->reactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,6 +91,36 @@ class Comment
     public function setPost(?Post $post): static
     {
         $this->post = $post;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReaction>
+     */
+    public function getReactions(): Collection
+    {
+        return $this->reactions;
+    }
+
+    public function addReaction(CommentReaction $reaction): static
+    {
+        if (!$this->reactions->contains($reaction)) {
+            $this->reactions->add($reaction);
+            $reaction->setComment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReaction(CommentReaction $reaction): static
+    {
+        if ($this->reactions->removeElement($reaction)) {
+            // set the owning side to null (unless already changed)
+            if ($reaction->getComment() === $this) {
+                $reaction->setComment(null);
+            }
+        }
 
         return $this;
     }

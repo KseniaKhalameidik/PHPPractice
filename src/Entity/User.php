@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,12 +23,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     /**
-     * @var list<string> The user roles
-     */
-    #[ORM\Column]
-    private array $roles = [];
-
-    /**
      * @var string The hashed password
      */
     #[ORM\Column]
@@ -34,6 +30,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Profile $profile = null;
+
+    /**
+     * @var Collection<int, Role>
+     */
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
+    #[ORM\JoinTable(name: 'user_role')]
+    private Collection $roles;
+
+    /**
+     * @var Collection<int, CommentReaction>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReaction::class, mappedBy: 'author', orphanRemoval: true)]
+    private Collection $commentReactions;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+        $this->commentReactions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -64,24 +79,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
+     * * TODO: Изменить этот метод, чтобы возвращал коллекцию ролей из таблицы ролей
+     * ПОДСКАЗКА: нужно создать таблицу ROLE и связать ее с User с помощью связи Многие-Ко-Многим
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = [];
+
+        foreach ($this->roles as $role) {
+            $roles[] = $role->getName();
+        }
+
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
-    }
-
-    /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
     }
 
     /**
@@ -123,6 +135,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->profile = $profile;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    public function getRoleEntities(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): static
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles->add($role);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): static
+    {
+        $this->roles->removeElement($role);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReaction>
+     */
+    public function getCommentReactions(): Collection
+    {
+        return $this->commentReactions;
+    }
+
+    public function addCommentReaction(CommentReaction $commentReaction): static
+    {
+        if (!$this->commentReactions->contains($commentReaction)) {
+            $this->commentReactions->add($commentReaction);
+            $commentReaction->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentReaction(CommentReaction $commentReaction): static
+    {
+        if ($this->commentReactions->removeElement($commentReaction)) {
+            // set the owning side to null (unless already changed)
+            if ($commentReaction->getAuthor() === $this) {
+                $commentReaction->setAuthor(null);
+            }
+        }
 
         return $this;
     }

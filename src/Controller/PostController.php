@@ -13,14 +13,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\CommentReactionRepository;
 
-#[IsGranted('ROLE_USER')]
 final class PostController extends AbstractController
 {
     public function __construct(private PostRepository $postRepository)
     {
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/post', name: 'app_post')]
     public function index(): Response
     {
@@ -33,6 +34,17 @@ final class PostController extends AbstractController
         );
     }
 
+    #[Route('/posts', name: 'app_posts_all')]
+    public function all(): Response
+    {
+        $allPosts = $this->postRepository->findAll();
+
+        return $this->render('post/index.html.twig', [
+            'posts' => $allPosts,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
     #[Route('/post/create', name: 'app_post_new', methods:['GET', 'POST'])]
     public function createPost(Request $request): Response
     {
@@ -58,28 +70,35 @@ final class PostController extends AbstractController
     }
 
     #[Route('/post/{id}/show', name: 'app_post_show', methods: ['GET'])]
-    public function show(Post $post): Response
+    public function show(Post $post, CommentReactionRepository $commentReactionRepository): Response
     {
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $reactionsByCommentId = $commentReactionRepository->getReactionsByCommentIdForPost($post, $user);
+
         $comment = new Comment();
         $commentForm = $this->createForm(CommentType::class, $comment, ['action' => $this->generateUrl('app_comment_new', ['post_id' => $post->getId()])]);
-
-         /** @var User */
-        $user = $this->getUser();
-        $profile = $user->getProfile();
 
         return $this->render(
             'post/show.html.twig', 
             ['post' => $post,
-            'form' => $commentForm ]
+            'form' => $commentForm,
+            'reactionsByCommentId' => $reactionsByCommentId ]
         );
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/post/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Post $post): Response
     {
-        /** @var User */
+        /** @var User $user */
         $user = $this->getUser();
-        $profile = $user->getProfile();
+
+        if ($post->getProfile() !== $user->getProfile()) {
+            throw $this->createAccessDeniedException();
+        }
 
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
@@ -93,12 +112,16 @@ final class PostController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/post/{id}/delete', name: 'app_post_delete', methods: ['POST'])]
-    public function delete(Request $request, Post $post): Response
+    public function delete(Post $post): Response
     {
-        /** @var User */
+        /** @var User $user */
         $user = $this->getUser();
-        $profile = $user->getProfile();
+
+        if ($post->getProfile() !== $user->getProfile()) {
+            throw $this->createAccessDeniedException();
+        }
 
         $this->postRepository->deletePost($post);
 

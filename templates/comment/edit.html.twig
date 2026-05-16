@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Comment{% endblock %}
+{% block title %}Редактирование комментария{% endblock %}
 
 {% block body %}
-    <h1>Edit Comment</h1>
+<div class="container">
+    <h1>Редактирование комментария</h1>
 
-    {{ include('comment/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('comment/_form.html.twig', {'button_label': 'Сохранить'}) }}
 
-    <a href="{{ path('app_comment_index') }}">back to list</a>
-
-    {{ include('comment/_delete_form.html.twig') }}
+    <a href="{{ path('app_post_show', {'id': comment.post.id}) }}">Назад к посту</a>
+</div>
 {% endblock %}

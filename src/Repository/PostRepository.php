@@ -43,11 +43,63 @@ class PostRepository extends ServiceEntityRepository
 
     public function getPostWithMaxComments()
     {
+        $qb = $this->createQueryBuilder('p'); // Создаем строителя запросов
+        $qb->select('p'); // Выполняем выборку поста с псевдонимом 'p'
+        $qb->addSelect('COUNT(c.id) AS HIDDEN cnt'); // Добавляем еще одну "скрытую выборку"
+        $qb->leftJoin('p.comments', 'c'); // Делаем LEFT JOIN с таблицей comments
+        $qb->groupBy('p.id'); // Группируем по айди поста
+        $qb->orderBy('cnt', 'DESC'); // Сортируем результат по скрытой выборке по убыванию
+        $qb->setMaxResults(1); // Устанавлием один результат выборки
+        return $qb->getQuery()->getOneOrNullResult(); // Получаем и выполняем запрос, возвращаем один результат или null
+    }
+
+    /**
+     * Возвращается пост с минимальным (но не нулевым) количеством комментариев
+     */
+    public function getPostWithMinComments()
+    {
         $qb = $this->createQueryBuilder('p');
         $qb->leftJoin('p.comments', 'c');
         $qb->groupBy('p.id');
+        $qb->having('COUNT(c.id) > 0');
+        $qb->orderBy('COUNT(c.id)', 'ASC');
+        $qb->setMaxResults(1);
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 
-        return $qb->getQuery()->getArrayResult();
+    /**
+     * Возвращает список постов, у которых комментариев больше среднего
+     * ПОДСКАЗКА: Среднее количество комментариев можно выполнить отдельным запросом или подзапросом
+     */
+    public function getPostsWithCommentsGreaterThanAverage(): array
+    {
+        $postCount = (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if ($postCount === 0) {
+            return [];
+        }
+
+        // AVG = totalComments / postCount; COUNT > AVG  <=>  COUNT * postCount > totalComments
+        $totalComments = (int) $this->createQueryBuilder('p')
+            ->select('COUNT(c.id)')
+            ->leftJoin('p.comments', 'c')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $qb = $this->createQueryBuilder('p');
+        $qb->select('p');
+        $qb->addSelect('COUNT(c.id) AS HIDDEN cnt');
+        $qb->leftJoin('p.comments', 'c');
+        $qb->groupBy('p.id');
+        $qb->having('COUNT(c.id) * :postCount > :totalComments');
+        $qb->setParameter('postCount', $postCount);
+        $qb->setParameter('totalComments', $totalComments);
+        $qb->orderBy('cnt', 'DESC');
+
+        return $qb->getQuery()->getResult();
     }
     //    /**
     //     * @return Post[] Returns an array of Post objects
