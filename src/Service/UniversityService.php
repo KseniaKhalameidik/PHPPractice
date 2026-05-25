@@ -7,7 +7,7 @@ use Psr\Cache\CacheItemInterface;
 
 class UniversityService
 {
-    private const UNIVERSITY_CACHE_KEY = 'universities';
+    private const UNIVERSITY_CACHE_KEY = 'universities.';
     private HttpClientInterface $universityApi;
     private CacheInterface $cache;
     public function __construct(private HttpClientInterface $api, CacheInterface $cache)
