@@ -1,0 +1,21 @@
+{# Шаблон для отображения прогноза погоды для Москвы (5 дней, с данными о ветре) #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Weather Forecast Moscow{% endblock %}
+
+{% block body %}
+
+<div>
+    <h1 class="msk-forecast">Прогноз погоды в Москве</h1>
+    {% for weather in weathers %}
+        <div style="margin: 5px;">
+            Прогноз за {{ weather.dateTime|date('Y-m-d') }}:
+            максимальная температура: {{ weather.maxTemp }},
+            минимальная температура: {{ weather.minTemp }},
+            скорость ветра: {{ weather.windSpeed }},
+            порывы ветра: {{ weather.windGust }},
+            направление ветра: {{ weather.windDirection }}°
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

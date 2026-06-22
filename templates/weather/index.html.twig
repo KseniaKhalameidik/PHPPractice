@@ -1,0 +1,18 @@
+{# Шаблон для отображения прогноза погоды для Владивостока #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Weather Forecast{% endblock %}
+
+{% block body %}
+
+<div>
+    <h1 class='vdk-forecast'>Прогноз погоды во Владивостоке</h1>
+    {% for weather in weathers %}
+        <div style="margin: 5px;">
+            Прогноз за {{ weather.dateTime|date('Y-m-d') }}: 
+            максимальная температура: {{ weather.maxTemp }}, 
+            минимальная температура: {{ weather.minTemp }}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
