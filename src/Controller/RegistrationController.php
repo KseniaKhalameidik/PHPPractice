@@ -10,12 +10,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Message\SendEmailMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class RegistrationController extends AbstractController
 {
     public function __construct(
         private UserPasswordHasherInterface $hasher, 
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+        private MessageBusInterface $bus
     ){
     }
 
@@ -36,8 +39,12 @@ final class RegistrationController extends AbstractController
             $hasherPassword = $this->hasher->hashPassword($user, $plainPassword);
             $this->userRepository->upgradePassword($user, $hasherPassword);
 
+            $sendEmailMessage = new SendEmailMessage($user->getId(), "You have registered!");
+            $this->bus->dispatch($sendEmailMessage);
+
             return $this->redirectToRoute('app_login');
         }
+
         return $this->render('registration/index.html.twig', [
             'controller_name' => 'RegistrationController',
         ]);
