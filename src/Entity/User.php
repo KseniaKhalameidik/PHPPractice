@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Role>
      */
-    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'user_role')]
     private Collection $roles;
 
@@ -147,14 +147,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->roles;
     }
 
-    public function addRole(Role $role): static
+    // public function addRole(Role $role): static
+    // {
+    //     if (!$this->roles->contains($role)) {
+    //         $this->roles->add($role);
+    //     }
+
+    //     return $this;
+    // }
+
+    public function addRole(string $roleName): static
     {
+        $role = new Role();
+        $role->setName($roleName);
+        
         if (!$this->roles->contains($role)) {
             $this->roles->add($role);
         }
-
+        
         return $this;
     }
+    
 
     public function removeRole(Role $role): static
     {
